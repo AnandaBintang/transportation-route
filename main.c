@@ -38,8 +38,8 @@ void pressToContinue()
 
 void login()
 {
-    char username[50];
-    char password[50];
+    char input_username[50];
+    char input_password[50];
     char role[50];
     char buffer[1024];
     int found = 0;
@@ -55,19 +55,19 @@ void login()
     {
         header("Login");
         printf("Type your username: ");
-        scanf(" %[^\n]", username);
+        scanf(" %[^\n]", input_username);
         printf("Type your password: ");
-        scanf(" %[^\n]", password);
+        scanf(" %[^\n]", input_password);
 
         rewind(file); // Go back to the start of the file
         while (fgets(buffer, sizeof(buffer), file))
         {
-            char username[50], password[50], role[50];
+            char username[50], password[50];
 
             // Assuming username and password are separated by a comma
             sscanf(buffer, "%[^,],%[^,],%s", username, password, role);
 
-            if (strcmp(username, username) == 0 && strcmp(password, password) == 0)
+            if (strcmp(input_username, username) == 0 && strcmp(input_password, password) == 0)
             {
                 found = 1;
                 break;
@@ -76,9 +76,8 @@ void login()
 
         if (found)
         {
-            printf("role: %s\n", role);
-            strcpy(users.username, username);
-            strcpy(users.password, password);
+            strcpy(users.username, input_username);
+            strcpy(users.password, input_password);
             strcpy(users.role, role);
             printf("Login success!\n");
             printf("Welcome, %s!\n", users.username);
@@ -99,8 +98,6 @@ int mainMenu(int choice, char role[])
 {
     header("Transportation Route Management System");
 
-    printf("Role: %s\n", role);
-
     if (strcmp(role, "ADMIN") == 0)
     {
         printf("1. Add Route\n");
@@ -109,14 +106,16 @@ int mainMenu(int choice, char role[])
         printf("4. Sort Routes by Distance\n");
         printf("5. Delete Route by Name\n");
         printf("6. Delete All Routes\n");
-        printf("7. Exit\n");
+        printf("7. Logout\n");
+        printf("8. Exit\n");
     }
     else
     {
         printf("1. Search Route\n");
         printf("2. Display Routes\n");
         printf("3. Sort Routes by Distance\n");
-        printf("4. Exit\n");
+        printf("4. Logout\n");
+        printf("5. Exit\n");
     }
 
     printf("Type your choice: ");
@@ -361,7 +360,6 @@ int main()
             if (strcmp(users.role, "ADMIN") == 0)
             {
                 addRoute();
-                break;
             }
             else
             {
@@ -411,9 +409,7 @@ int main()
             }
             else
             {
-                printf("Exiting program...\nThank you for using the Program!\n");
-                pressToContinue();
-                isRunning = false;
+                login();
             }
             break;
         case 5:
@@ -423,7 +419,9 @@ int main()
             }
             else
             {
-                printf("Invalid input!\n");
+                printf("Exiting program...\nThank you for using the Program!\n");
+                pressToContinue();
+                isRunning = false;
             }
             break;
         case 6:
@@ -437,10 +435,22 @@ int main()
             }
             break;
         case 7:
+            if (strcmp(users.role, "ADMIN") == 0)
+            {
+                login();
+            }
+            else
+            {
+                printf("Invalid input!\n");
+            }
+            break;
+        case 8:
             printf("Exiting program...\nThank you for using the Program!\n");
             pressToContinue();
             isRunning = false;
             break;
+        default:
+            printf("Invalid input!\n");
         }
     } while (isRunning);
 
